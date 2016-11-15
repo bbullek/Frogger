@@ -1,0 +1,4 @@
+name: Frogger
+description: The classic arcade game, now in web-app form
+dependencies:
+  browser: any
