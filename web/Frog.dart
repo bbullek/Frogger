@@ -58,8 +58,8 @@ class Frog {
   void move(String direction, int delta) {
     if (direction == "left") _xLoc -= delta;
     if (direction == "right") _xLoc += delta;
-    if (direction == "up") _yLoc -= (delta - 3);
-    if (direction == "down") _yLoc += (delta - 3);
+    if (direction == "up") _yLoc -= (delta - 5);
+    if (direction == "down") _yLoc += (delta - 5);
   }
 
   /**

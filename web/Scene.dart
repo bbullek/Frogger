@@ -43,49 +43,10 @@ class Scene {
     _cellWidth = _width ~/ _numCellsX;
     _cellHeight = _height ~/ _numCellsY;
     _backgroundImg = new ImageElement(src: "images/background.png");
-    _frogger = new Frog(_cellWidth, _cellHeight, 0, 0);
-    init_elems();
-  }
 
-  /**
-   * Populates the _elements list once the Scene is first initialized. Places
-   * the frog in the middle of the bottom row of 'cells'.
-   */
-  void init_elems() {
-    _elements = new List(_width * _height);
-    this.setElement(_numCellsX ~/ 2, _numCellsY - 1, _frogger);
-  }
-
-  /**
-   * Modifies the item at the given index of the _elements array. Since Dart
-   * doesn't offer support for 2D lists (TODO cite http://www.growingwiththeweb.com/2013/05/dart-my-first-steps.html),
-   * some simple arithmetic will map an index from the 1D list to a coordinate
-   * on our 2D grid.
-   * @param x: The x-coordinate on the grid
-   * @param y: The y-coordinate on the grid
-   * @param elem: The element to assign to the [x, y] cell within the grid
-   */
-  void setElement(int x, int y, var elem) {
-    _elements[x + _width * y] = elem;
-
-    // Set Frog location within its own class
-    if (elem is Frog) {
-      elem._xLoc = x * _cellWidth;
-      elem._yLoc = y * _cellHeight + 10;
-    }
-  }
-
-  /**
-   * Returns the item at the given index of the _elements array. Since Dart
-   * doesn't offer support for 2D lists (TODO cite http://www.growingwiththeweb.com/2013/05/dart-my-first-steps.html),
-   * some simple arithmetic will map an index from the 1D list to a coordinate
-   * on our 2D grid.
-   * @param x: The x-coordinate on the grid
-   * @param y: The y-coordinate on the grid
-   * @return The element stored within the indicated cell
-   */
-  dynamic getElement(int x, int y) {
-    return _elements[x + _width * y];
+    // Create Frogger
+    _frogger = new Frog(_cellWidth, _cellHeight, (_numCellsX ~/ 2) * _cellWidth,
+        (_numCellsY - 1) * _cellHeight);
   }
 
   /* Getters and setters */
