@@ -71,7 +71,7 @@ class Scene {
     // Set Frog location within its own class
     if (elem is Frog) {
       elem._xLoc = x * _cellWidth;
-      elem._yLoc = y * _cellHeight;
+      elem._yLoc = y * _cellHeight + 10;
     }
   }
 
@@ -97,6 +97,7 @@ class Scene {
     _backgroundImg.onLoad.listen((e) {
       context.drawImageScaled(_backgroundImg, 0, 0, _width, _height);
     });
+    context.drawImageScaled(_backgroundImg, 0, 0, _width, _height);
 
     // Draw Frogger
     _frogger.draw(context);

@@ -34,6 +34,18 @@ class Frog {
   }
 
   /**
+   * Makes the Frog hop in the given direction by the given amount.
+   * @param direction: Either "left", "right", "up", or "down"
+   * @param delta: The value by which to move the Frog in the given direction.
+   */
+  void move(String direction, int delta) {
+    if (direction == "left") _xLoc -= delta;
+    if (direction == "right") _xLoc += delta;
+    if (direction == "up") _yLoc -= (delta - 3);
+    if (direction == "down") _yLoc += (delta - 3);
+  }
+
+  /**
    * Updates the given context by rendering the Frog on the screen.
    */
   void draw(CanvasRenderingContext2D context) {
@@ -41,5 +53,6 @@ class Frog {
       // TODO Cite: https://api.dartlang.org/stable/1.20.1/dart-html/CanvasRenderingContext2D/drawImageScaled.html
       context.drawImageScaled(_frogImg, _xLoc, _yLoc, _width, _height);
     });
+    context.drawImageScaled(_frogImg, _xLoc, _yLoc, _width, _height);
   }
 }

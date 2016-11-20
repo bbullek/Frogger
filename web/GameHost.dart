@@ -14,16 +14,14 @@ class GameHost {
   CanvasElement _canvas;
   Keyboard _keyboard;
   Scene _scene;
-
-  int _lastTimestamp = 0;
-  double _x = 400.0;
-  double _y = 300.0;
+  int _lastTimestamp;
 
   // Constructor for the GameHost class
   GameHost(CanvasElement canvas) {
-    this._canvas = canvas;
-    this._keyboard = new Keyboard();
-    this._scene = new Scene(canvas);
+    _canvas = canvas;
+    _keyboard = new Keyboard();
+    _scene = new Scene(canvas);
+    _lastTimestamp = new DateTime.now().millisecondsSinceEpoch;
   }
 
   /**
@@ -52,29 +50,32 @@ class GameHost {
    */
   double _getElapsed() {
     final int time = new DateTime.now().millisecondsSinceEpoch;
+    double elapsed = (time - _lastTimestamp) / 1000.0;
 
-    double elapsed = 0.0;
-    if (_lastTimestamp != 0) {
-      elapsed = (time - _lastTimestamp) / 1000.0;
+    // If at least 1 second has passed, reset the time-stamp
+    if (elapsed > 1) {
+      _lastTimestamp = time;
+      return elapsed;
     }
 
-    _lastTimestamp = time;
-    return elapsed;
+    return 0.0; // Act as though no time has passed
   }
 
   /**
    * Moves Frogger in the appropriate direction by checking the game's 'state'
    * (i.e. which key(s) is/are currently being pressed).
-   *
    * @param elapsed - The elapsed time (in seconds) since the last update.
    */
   void _update(final double elapsed) {
-    final double velocity = 100.0; // Adjust position by 100 pixels per second
+    if (elapsed != 0) {
+      int deltaX = _scene._cellWidth;
+      int deltaY = _scene._cellHeight;
 
-    if (_keyboard.isPressed(KeyCode.LEFT)) _x -= velocity * elapsed;
-    if (_keyboard.isPressed(KeyCode.RIGHT)) _x += velocity * elapsed;
-    if (_keyboard.isPressed(KeyCode.UP)) _y -= velocity * elapsed;
-    if (_keyboard.isPressed(KeyCode.DOWN)) _y += velocity * elapsed;
+      if (_keyboard.isPressed(KeyCode.LEFT)) _scene._frogger.move("left", deltaX);
+      if (_keyboard.isPressed(KeyCode.RIGHT)) _scene._frogger.move("right", deltaX);
+      if (_keyboard.isPressed(KeyCode.UP)) _scene._frogger.move("up", deltaY);
+      if (_keyboard.isPressed(KeyCode.DOWN)) _scene._frogger.move("down", deltaY);
+    }
   }
 
   /**
