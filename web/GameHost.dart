@@ -23,7 +23,7 @@ class GameHost {
   GameHost(CanvasElement canvas) {
     this._canvas = canvas;
     this._keyboard = new Keyboard();
-    this._scene = new Scene();
+    this._scene = new Scene(canvas);
   }
 
   /**

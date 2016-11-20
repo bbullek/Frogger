@@ -1,6 +1,7 @@
 library main;
 
 import 'dart:html';
+import 'dart:js';
 import 'dart:math';
 import 'dart:async';
 import 'dart:collection';
@@ -8,6 +9,7 @@ import 'dart:collection';
 part 'Keyboard.dart';
 part 'GameHost.dart';
 part 'Scene.dart';
+part 'Frog.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");
