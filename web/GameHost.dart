@@ -67,15 +67,18 @@ class GameHost {
    * @param elapsed - The elapsed time (in seconds) since the last update.
    */
   void _update(final double elapsed) {
-    if (elapsed != 0) {
+    //if (elapsed != 0) {
       int deltaX = _scene._cellWidth;
       int deltaY = _scene._cellHeight;
 
-      if (_keyboard.isPressed(KeyCode.LEFT)) _scene._frogger.move("left", deltaX);
-      if (_keyboard.isPressed(KeyCode.RIGHT)) _scene._frogger.move("right", deltaX);
-      if (_keyboard.isPressed(KeyCode.UP)) _scene._frogger.move("up", deltaY);
-      if (_keyboard.isPressed(KeyCode.DOWN)) _scene._frogger.move("down", deltaY);
-    }
+      if (_keyboard.isPressed(KeyCode.LEFT)) _scene.frogger.move("left", deltaX);
+      if (_keyboard.isPressed(KeyCode.RIGHT)) _scene.frogger.move("right", deltaX);
+      if (_keyboard.isPressed(KeyCode.UP)) _scene.frogger.move("up", deltaY);
+      if (_keyboard.isPressed(KeyCode.DOWN)) _scene.frogger.move("down", deltaY);
+
+      _scene.checkFrog();
+      if (_keyboard.isPressed(KeyCode.SPACE)) window.alert((_scene.frogger.yLoc).toString());
+    //}
   }
 
   /**

@@ -88,6 +88,51 @@ class Scene {
     return _elements[x + _width * y];
   }
 
+  /* Getters and setters */
+  Frog get frogger => _frogger;
+
+  set frogger(Frog value) {_frogger = value;}
+
+  int get width => _width;
+
+  int get height => _height;
+
+  int get numCellsX => _numCellsX;
+
+  int get numCellsY => _numCellsY;
+
+  int get cellWidth => _cellWidth;
+
+  int get cellHeight => _cellHeight;
+
+  /**
+   * Validates that Frogger hasn't gone out-of-bounds (i.e. beyond the borders
+   * of the scene's grid.
+   */
+  void checkFrog() {
+    // TODO Cite: http://www.dotnetheaven.com/article/how-to-use-getters-and-setters-method-in-dart
+    int xFrogCell = _frogger.xLoc ~/ _cellWidth;
+    int yFrogCell = _frogger.yLoc ~/ _cellHeight;
+    int xLocMax = _cellWidth * (_numCellsX - 1);
+    int yLocMax = _cellHeight * (_numCellsY - 1);
+
+    // Validate x-location
+    if (xFrogCell >= _numCellsX || frogger.xLoc > xLocMax) {
+      _frogger.xLoc = xLocMax;
+    }
+    else if (xFrogCell < 0 || frogger.xLoc < 0) {
+      _frogger.xLoc = 0;
+    }
+
+    // Validate y-location
+    if (yFrogCell >= _numCellsY || frogger.yLoc > yLocMax) {
+      _frogger.yLoc = yLocMax;
+    }
+    else if (yFrogCell < 0 || frogger.yLoc < 0) {
+      _frogger.yLoc = 0;
+    }
+  }
+
   /**
    * Updates the given context by drawing the active elements.
    * @param context: The 2D context used to render images on the HTML canvas.

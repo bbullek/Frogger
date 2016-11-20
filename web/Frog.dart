@@ -12,6 +12,9 @@ class Frog {
   /** Frogger's image */
   ImageElement _frogImg;
 
+  /** The direction in which Frogger is facing */
+  Direction _facing;
+
   /** The width (in pixels) of the Frog. */
   int _width;
 
@@ -31,7 +34,21 @@ class Frog {
     _xLoc = xLoc;
     _yLoc = yLoc;
     _frogImg = new ImageElement(src: "images/frog1.png");
+    _facing = Direction.NORTH;
   }
+
+  /* Getters and setters */
+  Direction get facing => _facing;
+
+  set facing(Direction value) {_facing = value;}
+
+  int get xLoc => _xLoc;
+
+  set xLoc(int value) { _xLoc = value; }
+
+  int get yLoc => _yLoc;
+
+  set yLoc(int value) { _yLoc = value; }
 
   /**
    * Makes the Frog hop in the given direction by the given amount.

@@ -10,6 +10,7 @@ part 'Keyboard.dart';
 part 'GameHost.dart';
 part 'Scene.dart';
 part 'Frog.dart';
+part 'Direction.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");
