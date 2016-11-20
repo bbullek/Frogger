@@ -7,6 +7,7 @@ import 'dart:collection';
 
 part 'Keyboard.dart';
 part 'GameHost.dart';
+part 'Scene.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");

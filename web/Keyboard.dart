@@ -1,5 +1,8 @@
 part of main;
 
+/**
+ * The set of keys that the user is actively pressing.
+ */
 class Keyboard {
   final HashSet<int> _keys = new HashSet<int>();
 

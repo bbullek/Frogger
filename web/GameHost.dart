@@ -12,7 +12,8 @@ part of main;
  */
 class GameHost {
   CanvasElement _canvas;
-  final Keyboard _keyboard = new Keyboard();
+  Keyboard _keyboard;
+  Scene _scene;
 
   int _lastTimestamp = 0;
   double _x = 400.0;
@@ -21,6 +22,8 @@ class GameHost {
   // Constructor for the GameHost class
   GameHost(CanvasElement canvas) {
     this._canvas = canvas;
+    this._keyboard = new Keyboard();
+    this._scene = new Scene();
   }
 
   /**
@@ -79,22 +82,7 @@ class GameHost {
    * user has used the keyboard to move him).
    */
   void _render() {
-    final CanvasRenderingContext2D context = _canvas.context2D;
-
-    /*
-     * The double dot operator (..) is a cascade operator which allows for
-     * cascading statements as it "returns" the source object (in this case,
-     * context)
-     */
-    context..globalAlpha = 1
-           ..fillStyle = "white"
-           ..beginPath()
-           ..rect(0, 0, 800, 600)
-           ..fill();
-
-    context..beginPath()
-           ..fillStyle = "black"
-           ..arc(_x, _y, 32, 0, PI * 2.0)
-           ..fill();
+    CanvasRenderingContext2D context = _canvas.context2D;
+    this._scene.draw(context);
   }
 }
