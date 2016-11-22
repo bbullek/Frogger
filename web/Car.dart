@@ -2,7 +2,10 @@ part of main;
 
 class Car {
   /** The number of horizontal cells/units a Car takes up within the grid. */
-  final int NUM_CELLS = 2;
+  static final int NUM_CELLS = 2;
+
+  /** The fixed speed that a Car travels. */
+  static final int SPEED = 150;
 
   /** The Car's image */
   ImageElement _carImg;
@@ -30,6 +33,7 @@ class Car {
   int get height => _height;
 
   int get offset => _offset;
+  /* End of getters and setters */
 
   /** Returns the appropriate image file to render within the scene, depending
    * on the given Color.

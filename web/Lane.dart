@@ -36,6 +36,20 @@ class Lane {
     _random = new Random();
   }
 
+  /* Getters and setters */
+  int get width => _width;
+
+  int get height => _height;
+
+  Direction get travelFlow => _travelFlow;
+
+  List<Car> get vehicles => _vehicles;
+
+  int get offset => _offset;
+
+  Random get random => _random;
+  /* End of getters and setters */
+
   /** Given an integer (lane number), returns the direction of travel within
    * this Lane.
    * @param laneNumber: An integer (within range of Scene's NUM_LANES attribute).
@@ -60,11 +74,29 @@ class Lane {
 
     // Cars spawn in the odd-numbered (left-traveling) lanes
     if (_travelFlow == Direction.LEFT) {
+      // The cells in which Cars will initially spawn
+      List<int> cells = [0, 4, 8];
+      // Create three Cars
       for (int i = 0; i < 3; i++) {
-        Color randColor = Color.values[_random.nextInt(Color.values.length)];
-        int offset = (_width ~/ cellWidth) ~/ (3 * (i + 1));
-        _vehicles.add(new Car(randColor, cellWidth, cellHeight, offset));
+        int carOffset = cells[i] * cellWidth;
+        spawnVehicle(true, cellWidth, cellHeight, carOffset);
       }
+    }
+  }
+
+  /**
+   * Places a Vehicle in the Lane at the given offset.
+   * @param isCar: If true, a Car is created.
+   * @param vehicleOffset: The offset (in pixels) from the left of the Lane
+   *        where the Vehicle will be placed.
+   * @param width: The width (in pixels) of a cell.
+   * @param height: The height (in pixels) of a cell.
+   */
+  void spawnVehicle(bool isCar, int cellWidth, int cellHeight,
+      int vehicleOffset) {
+    if (isCar) {
+      Color randColor = Color.values[_random.nextInt(Color.values.length)];
+      _vehicles.add(new Car(randColor, cellWidth, cellHeight, vehicleOffset));
     }
   }
 

@@ -6,7 +6,7 @@ part of main;
  */
 class Scene {
   /** The number of lanes in the scene, based on the .png image. */
-  final int NUM_LANES = 5;
+  static final int NUM_LANES = 5;
 
   /** The width (in pixels) of the scene. */
   int _width;
@@ -72,6 +72,7 @@ class Scene {
   int get cellWidth => _cellWidth;
 
   int get cellHeight => _cellHeight;
+  /* End of getters and setters */
 
   /** Creates the Scene's list of Lanes upon instantiation. */
   void initLanes() {
@@ -83,7 +84,8 @@ class Scene {
     for (int laneNumber = 0; laneNumber < NUM_LANES; laneNumber++) {
       int laneWidth = _cellWidth * _numCellsX;
       int laneHeight = _cellHeight * _numCellsY;
-      int laneOffset = _cellHeight * laneNumber + _cellHeight * numOffsetCells;
+      int laneOffset = _cellHeight * laneNumber + _cellHeight *
+          numOffsetCells - (35 + 5 * laneNumber);
       // Create this Lane and add Vehicles to it
       _lanes.add(new Lane(laneWidth, laneHeight, laneOffset, laneNumber));
       _lanes[laneNumber].initVehicles(_cellWidth, _cellHeight);
@@ -115,6 +117,21 @@ class Scene {
     }
     else if (yFrogCell < 0 || frogger.yLoc < 0) {
       _frogger.yLoc = 0;
+    }
+  }
+
+  /**
+   * Updates autonomously moving elements within the scene (vehicles, logs,
+   * etc.)
+   * @param elapsed: The elapsed time (in seconds) since the last update.
+   */
+  void update(final double elapsed) {
+    // Move all Vehicles forward by some velocity times the delta time slice
+    int delta = (elapsed * Car.SPEED).toInt();
+    for (Lane lane in _lanes) {
+      for (Car car in lane.vehicles) {
+        car.move(delta);
+      }
     }
   }
 

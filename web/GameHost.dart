@@ -71,7 +71,7 @@ class GameHost {
    * Moves Frogger in the appropriate direction by checking the game's 'state'
    * (i.e. which key(s) is/are currently being pressed). Implements a simple
    * checking system to prevent the player from hopping around too quickly.
-   * @param elapsed - The elapsed time (in seconds) since the last update.
+   * @param elapsed: The elapsed time (in seconds) since the last update.
    */
   void _update(final double elapsed) {
     int deltaX = _scene._cellWidth;
@@ -103,6 +103,8 @@ class GameHost {
     }
 
     if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(""); // for debugging
+
+    _scene.update(elapsed);
 
     // Validate elements within the scene
     _scene.checkFrog();

@@ -41,6 +41,7 @@ class Frog {
   int get yLoc => _yLoc;
 
   set yLoc(int value) { _yLoc = value; }
+  /* End of getters and setters */
 
   /**
    * Makes the Frog hop in the given direction by the given amount.
