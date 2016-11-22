@@ -12,9 +12,6 @@ class Frog {
   /** Frogger's image */
   ImageElement _frogImg;
 
-  /** The direction in which Frogger is facing */
-  Direction _facing;
-
   /** The width (in pixels) of the Frog. */
   int _width;
 
@@ -27,21 +24,16 @@ class Frog {
   /** The offset (in pixels) from the top of the screen to draw the Frog. */
   int _yLoc;
 
-  // Frog's constructor
+  /** Frog's constructor */
   Frog(int width, int height, int xLoc, int yLoc) {
     _width = width;
     _height = height;
     _xLoc = xLoc;
     _yLoc = yLoc;
-    _frogImg = new ImageElement(src: "images/frog1.png");
-    _facing = Direction.NORTH;
+    _frogImg = new ImageElement(src: "images/frogUp.png");
   }
 
   /* Getters and setters */
-  Direction get facing => _facing;
-
-  set facing(Direction value) {_facing = value;}
-
   int get xLoc => _xLoc;
 
   set xLoc(int value) { _xLoc = value; }
@@ -52,18 +44,31 @@ class Frog {
 
   /**
    * Makes the Frog hop in the given direction by the given amount.
-   * @param direction: Either "left", "right", "up", or "down"
+   * @param direction: A member of the Direction enum -- LEFT/RIGHT/UP/DOWN.
    * @param delta: The value by which to move the Frog in the given direction.
    */
-  void move(String direction, int delta) {
-    if (direction == "left") _xLoc -= delta;
-    if (direction == "right") _xLoc += delta;
-    if (direction == "up") _yLoc -= (delta - 5);
-    if (direction == "down") _yLoc += (delta - 5);
+  void move(Direction direction, int delta) {
+    if (direction == Direction.LEFT) {
+      _xLoc -= delta;
+      _frogImg = new ImageElement(src: "images/frogLeft.png");
+    }
+    if (direction == Direction.RIGHT) {
+      _xLoc += delta;
+      _frogImg = new ImageElement(src: "images/frogRight.png");
+    }
+    if (direction == Direction.UP) {
+      _yLoc -= delta;
+      _frogImg = new ImageElement(src: "images/frogUp.png");
+    }
+    if (direction == Direction.DOWN) {
+      _yLoc += delta;
+      _frogImg = new ImageElement(src: "images/frogDown.png");
+    }
   }
 
   /**
    * Updates the given context by rendering the Frog on the screen.
+   * @param context: The 2D context used to render images on the HTML canvas.
    */
   void draw(CanvasRenderingContext2D context) {
     _frogImg.onLoad.listen((e) {

@@ -6,6 +6,7 @@ part of main;
 class Keyboard {
   final HashSet<int> _keys = new HashSet<int>();
 
+  /** Keyboard's constructor */
   Keyboard() {
     window.onKeyDown.listen((final KeyboardEvent e) {
           _keys.add(e.keyCode);

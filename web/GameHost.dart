@@ -75,32 +75,34 @@ class GameHost {
    */
   void _update(final double elapsed) {
     int deltaX = _scene._cellWidth;
-    int deltaY = _scene._cellHeight;
+    int deltaY = _scene._cellHeight - 5;
     int time = new DateTime.now().millisecondsSinceEpoch;
 
     // Check if Frogger should hop sideways
     if (_elapsedHorizontalHop > 0.25) {
       if (_keyboard.isPressed(KeyCode.LEFT)) {
-        _scene.frogger.move("left", deltaX);
+        _scene.frogger.move(Direction.LEFT, deltaX);
         _lastHorizontalHop = time;
       }
       if (_keyboard.isPressed(KeyCode.RIGHT)) {
-        _scene.frogger.move("right", deltaX);
+        _scene.frogger.move(Direction.RIGHT, deltaX);
         _lastHorizontalHop = time;
       }
     }
 
     // Check if Frogger should hop forwards/backwards
-    if (_elapsedVerticalHop > 0.5) {
+    if (_elapsedVerticalHop > 0.25) {
       if (_keyboard.isPressed(KeyCode.UP)) {
-        _scene.frogger.move("up", deltaY);
+        _scene.frogger.move(Direction.UP, deltaY);
         _lastVerticalHop = time;
       }
       if (_keyboard.isPressed(KeyCode.DOWN)) {
-        _scene.frogger.move("down", deltaY);
+        _scene.frogger.move(Direction.DOWN, deltaY);
         _lastVerticalHop = time;
       }
     }
+
+    if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(""); // for debugging
 
     // Validate elements within the scene
     _scene.checkFrog();

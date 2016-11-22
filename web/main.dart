@@ -10,6 +10,9 @@ part 'Keyboard.dart';
 part 'GameHost.dart';
 part 'Scene.dart';
 part 'Frog.dart';
+part 'Lane.dart';
+//part 'Car.dart';
+part 'Color.dart';
 part 'Direction.dart';
 
 void main() {
