@@ -84,7 +84,9 @@ class Scene {
       int laneWidth = _cellWidth * _numCellsX;
       int laneHeight = _cellHeight * _numCellsY;
       int laneOffset = _cellHeight * laneNumber + _cellHeight * numOffsetCells;
+      // Create this Lane and add Vehicles to it
       _lanes.add(new Lane(laneWidth, laneHeight, laneOffset, laneNumber));
+      _lanes[laneNumber].initVehicles(_cellWidth, _cellHeight);
     }
   }
 
@@ -129,5 +131,10 @@ class Scene {
 
     // Draw Frogger
     _frogger.draw(context);
+
+    // Draw each Lane
+    for (Lane lane in _lanes) {
+      lane.draw(context);
+    }
   }
 }
