@@ -9,7 +9,7 @@ class Car extends Vehicle {
   static final int NUM_CELLS = 2;
 
   /** The fixed speed that a Car travels. */
-  static final int SPEED = 150;
+  static final int SPEED = 175;
 
   /** Car's constructor, which calls Vehicle's constructor */
   Car(Color color, int cellWidth, int height, int offset) :

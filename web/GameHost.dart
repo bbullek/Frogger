@@ -105,9 +105,6 @@ class GameHost {
     if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(""); // for debugging
 
     _scene.update(elapsed);
-
-    // Validate elements within the scene
-    _scene.checkFrog();
   }
 
   /**

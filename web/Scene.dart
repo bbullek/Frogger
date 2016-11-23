@@ -132,7 +132,21 @@ class Scene {
       for (Vehicle vehicle in lane.vehicles) {
         vehicle.move(delta);
       }
+      lane.checkVehicles();
+
+      // If enough time has passed, random chance of spawning a new Vehicle
+      double currentTime =  new DateTime.now().millisecondsSinceEpoch / 1000.0;
+      if (currentTime - lane._lastVehicleSpawnTime > Lane.MIN_VEHICLE_SPAWN_TIME) {
+        double rand = lane.random.nextDouble();
+        if (rand <= Lane.VEHICLE_SPAWN_PROB) {
+          lane.lastVehicleSpawnTime = currentTime;
+          lane.spawnVehicle(_cellWidth, _cellHeight, lane.width);
+        }
+      }
     }
+
+    // Validate elements within the scene
+    checkFrog();
   }
 
   /**
