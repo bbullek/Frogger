@@ -11,6 +11,7 @@ part 'GameHost.dart';
 part 'Scene.dart';
 part 'Frog.dart';
 part 'Lane.dart';
+part 'Vehicle.dart';
 part 'Car.dart';
 part 'Color.dart';
 part 'Direction.dart';

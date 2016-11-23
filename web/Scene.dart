@@ -129,8 +129,8 @@ class Scene {
     // Move all Vehicles forward by some velocity times the delta time slice
     int delta = (elapsed * Car.SPEED).toInt();
     for (Lane lane in _lanes) {
-      for (Car car in lane.vehicles) {
-        car.move(delta);
+      for (Vehicle vehicle in lane.vehicles) {
+        vehicle.move(delta);
       }
     }
   }

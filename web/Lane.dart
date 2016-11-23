@@ -24,8 +24,7 @@ class Lane {
    * The list of Vehicles currently traveling through this Lane.
    * This list is populated by the Scene class.
    */
-  // TODO: Vehicles list
-  List<Car> _vehicles;
+  List<Vehicle> _vehicles;
 
   /** Lane's constructor */
   Lane(int width, int height, int offset, int laneNumber) {
@@ -43,7 +42,7 @@ class Lane {
 
   Direction get travelFlow => _travelFlow;
 
-  List<Car> get vehicles => _vehicles;
+  List<Vehicle> get vehicles => _vehicles;
 
   int get offset => _offset;
 
@@ -55,7 +54,7 @@ class Lane {
    * @param laneNumber: An integer (within range of Scene's NUM_LANES attribute).
    * @return A value of the Direction enum.
    */
-  Direction getTravelFlow(int laneNumber) {
+  static Direction getTravelFlow(int laneNumber) {
     if ((laneNumber + 1) % 2 == 0) {
       return Direction.RIGHT;
     } else {
@@ -106,7 +105,7 @@ class Lane {
    */
   void draw(CanvasRenderingContext2D context) {
     // Iterate through the Cars in this Lane and draw each of them
-    for (Car vehicle in _vehicles) {
+    for (Vehicle vehicle in _vehicles) {
       vehicle.draw(context, _offset);
     }
   }
