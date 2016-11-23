@@ -15,6 +15,7 @@ part 'Vehicle.dart';
 part 'Car.dart';
 part 'Color.dart';
 part 'Direction.dart';
+part 'GameOverException.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");

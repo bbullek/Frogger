@@ -121,6 +121,39 @@ class Scene {
   }
 
   /**
+   * If Frogger has run into an obstacle (vehicle, log, etc.), the player loses
+   * a life and is sent back to the beginning of the game.
+   */
+  void checkObstacles() {
+    // The ranges between which the Frogger sprite currently sits on the screen
+    List froggerX = [_frogger.xLoc + 15, _frogger.xLoc + _frogger.width - 15];
+    List froggerY = [_frogger.yLoc + 15, _frogger.yLoc + _frogger.height - 15];
+
+    // Check whether Frogger was squished by a vehicle
+    for (Lane lane in _lanes) {
+      for (Vehicle vehicle in lane.vehicles) {
+        List vehicleX = [vehicle.offset, vehicle.offset + vehicle.width];
+        List vehicleY = [lane.offset, lane.offset + vehicle.height];
+        if (overlap(froggerX[0], froggerX[1], froggerY[0], froggerY[1],
+                    vehicleX[0], vehicleX[1], vehicleY[0], vehicleY[1])) {
+          throw new GameOverException("Frogger's been squished!");
+        }
+      }
+    }
+  }
+
+  /**
+   * Given the left/right/top/bottom coordinates of two objects (r1 and r2)
+   * on a 2D coordinate system, returns true if they overlap.
+   */
+  // TODO Cite http://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
+  bool overlap (int r1Left, int r1Right, int r1Top, int r1Bottom,
+                int r2Left, int r2Right, int r2Top, int r2Bottom) {
+    return !(r2Left > r1Right || r2Right < r1Left || r2Top > r1Bottom ||
+             r2Bottom < r1Top);
+  }
+
+  /**
    * Updates autonomously moving elements within the scene (vehicles, logs,
    * etc.)
    * @param elapsed: The elapsed time (in seconds) since the last update.
@@ -146,7 +179,12 @@ class Scene {
     }
 
     // Validate elements within the scene
-    checkFrog();
+    try {
+      checkFrog();
+      checkObstacles();
+    } on GameOverException {
+      throw new GameOverException("");
+    }
   }
 
   /**

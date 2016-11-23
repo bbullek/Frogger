@@ -34,6 +34,10 @@ class Frog {
   }
 
   /* Getters and setters */
+  int get width => _width;
+
+  int get height => _height;
+
   int get xLoc => _xLoc;
 
   set xLoc(int value) { _xLoc = value; }

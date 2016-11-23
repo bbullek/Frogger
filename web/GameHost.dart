@@ -104,7 +104,12 @@ class GameHost {
 
     if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(""); // for debugging
 
-    _scene.update(elapsed);
+    // Update the rest of the scene & check for game-over
+    try {
+      _scene.update(elapsed);
+    } on GameOverException {
+      window.alert("dead!!");
+    }
   }
 
   /**
