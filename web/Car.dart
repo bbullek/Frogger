@@ -11,6 +11,9 @@ class Car extends Vehicle {
   /** The fixed speed that a Car travels. */
   static final int SPEED = 175;
 
+  /** The respawn rate of a Car */
+  static final MIN_RESPAWN_TIME = 2.0;
+
   /** Car's constructor, which calls Vehicle's constructor */
   Car(Color color, int cellWidth, int height, int offset) :
     super(cellWidth * NUM_CELLS, height, offset, getCarImage(color));

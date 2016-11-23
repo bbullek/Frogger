@@ -1,7 +1,7 @@
 part of main;
 
-/** Vehicles are a base class for Cars and Trucks, which share much of the same
- * functionality.
+/** Vehicles are a base class for Cars, Trucks, and FireEngines, which share
+ * much of the same functionality.
  */
 abstract class Vehicle {
   /** The width (in pixels) of the Vehicle. */
@@ -31,6 +31,17 @@ abstract class Vehicle {
 
   int get offset => _offset;
   /* End of getters and setters */
+
+  /**
+   * Returns the speed of the given Vehicle object.
+   * @param vehicle: An instance of a Car, Truck, or FireEngine
+   * @return The integer value of the Vehicle's speed
+   */
+  static int getSpeed(Vehicle vehicle) {
+    if (vehicle is Car) return Car.SPEED;
+    if (vehicle is Truck) return Truck.SPEED;
+    if (vehicle is FireEngine) return FireEngine.SPEED;
+  }
 
   /**
    * Makes the Vehicle move within the Lane by the given amount.

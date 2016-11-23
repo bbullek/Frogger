@@ -160,20 +160,25 @@ class Scene {
    */
   void update(final double elapsed) {
     // Move all Vehicles forward by some velocity times the delta time slice
-    int delta = (elapsed * Car.SPEED).toInt();
     for (Lane lane in _lanes) {
       for (Vehicle vehicle in lane.vehicles) {
+        int delta = (elapsed * Vehicle.getSpeed(vehicle)).toInt();
         vehicle.move(delta);
       }
       lane.checkVehicles();
 
       // If enough time has passed, random chance of spawning a new Vehicle
       double currentTime =  new DateTime.now().millisecondsSinceEpoch / 1000.0;
-      if (currentTime - lane._lastVehicleSpawnTime > Lane.MIN_VEHICLE_SPAWN_TIME) {
+      if (currentTime - lane._lastVehicleSpawnTime > lane.min_vehicle_spawn_time) {
         double rand = lane.random.nextDouble();
         if (rand <= Lane.VEHICLE_SPAWN_PROB) {
           lane.lastVehicleSpawnTime = currentTime;
-          lane.spawnVehicle(_cellWidth, _cellHeight, lane.width);
+          // Cars spawn at the far-right end, other vehicles spawn on the left
+          if (lane.laneNumber == 2 || lane.laneNumber == 4) {
+            lane.spawnVehicle(_cellWidth, _cellHeight, 0 - _cellWidth * Truck.NUM_CELLS);
+          } else {
+            lane.spawnVehicle(_cellWidth, _cellHeight, lane.width);
+          }
         }
       }
     }

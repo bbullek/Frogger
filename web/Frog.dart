@@ -24,12 +24,18 @@ class Frog {
   /** The offset (in pixels) from the top of the screen to draw the Frog. */
   int _yLoc;
 
+  /** The first coordinates that Frogger is sent to correspond to the origin. */
+  int _xOrigin;
+  int _yOrigin;
+
   /** Frog's constructor */
   Frog(int width, int height, int xLoc, int yLoc) {
     _width = width;
     _height = height;
     _xLoc = xLoc;
     _yLoc = yLoc;
+    _xOrigin = xLoc;
+    _yOrigin = yLoc;
     _frogImg = new ImageElement(src: "images/frogUp.png");
   }
 
@@ -46,6 +52,15 @@ class Frog {
 
   set yLoc(int value) { _yLoc = value; }
   /* End of getters and setters */
+
+  /**
+   * Sends Frogger back to the "origin" (bottom row of the screen, in the
+   * middle).
+   */
+  void reset() {
+    _xLoc = _xOrigin;
+    _yLoc = _yOrigin;
+  }
 
   /**
    * Makes the Frog hop in the given direction by the given amount.

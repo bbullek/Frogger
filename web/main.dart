@@ -13,6 +13,8 @@ part 'Frog.dart';
 part 'Lane.dart';
 part 'Vehicle.dart';
 part 'Car.dart';
+part 'Truck.dart';
+part 'FireEngine.dart';
 part 'Color.dart';
 part 'Direction.dart';
 part 'GameOverException.dart';
