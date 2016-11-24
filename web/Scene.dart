@@ -145,10 +145,10 @@ class Scene {
   }
 
   /**
-   * If Frogger has run into an obstacle (vehicle, log, etc.), the player loses
-   * a life and is sent back to the beginning of the game.
+   * Detects whether Frogger has collided with a Vehicle and throws a
+   * GameOverException if applicable.
    */
-  void checkObstacles() {
+  void checkLanes() {
     // The ranges between which the Frogger sprite currently sits on the screen
     List froggerX = [_frogger.xLoc + 15, _frogger.xLoc + _frogger.width - 15];
     List froggerY = [_frogger.yLoc + 15, _frogger.yLoc + _frogger.height - 15];
@@ -159,13 +159,25 @@ class Scene {
         List vehicleX = [vehicle.offset, vehicle.offset + vehicle.width];
         List vehicleY = [lane.offset, lane.offset + vehicle.height];
         if (overlap(froggerX[0], froggerX[1], froggerY[0], froggerY[1],
-                    vehicleX[0], vehicleX[1], vehicleY[0], vehicleY[1])) {
+            vehicleX[0], vehicleX[1], vehicleY[0], vehicleY[1])) {
           throw new GameOverException("Frogger's been squished!");
         }
       }
     }
+  }
 
-    int x = (_cellHeight * 0.5).toInt();
+  /**
+   * Detects whether Frogger is currently on a water tile. If so, Frogger
+   * must be sitting on an object (a Log or Turtle), in which case he floats
+   * along with it. Otherwise, a GameOverException is thrown because he has
+   * drowned.
+   */
+  void checkRivers() {
+    // The ranges between which the Frogger sprite currently sits on the screen
+    int padding = (_cellHeight * 0.5).toInt();
+    List froggerX = [_frogger.xLoc + 15, _frogger.xLoc + _frogger.width - 15];
+    List froggerY = [_frogger.yLoc + padding + 15,
+                     _frogger.yLoc + _frogger.height + padding - 15];
 
     // Check whether Frogger has entered a water tile and has drowned
     for (River river in _rivers) {
@@ -177,13 +189,13 @@ class Scene {
 
       for (RiverObject riverObj in river.riverObjs) {
         // Disregard and break if Frogger isn't in this River
-        bool inRiver = overlap(froggerX[0], froggerX[1], froggerY[0] + x, froggerY[1] + x,
+        bool inRiver = overlap(froggerX[0], froggerX[1], froggerY[0], froggerY[1],
             riverX[0], riverX[1], riverY[0], riverY[1]);
         if (!inRiver) break;
 
         List riverObjX = RiverObject.getXRange(riverObj);
 
-        bool safe = (overlap(froggerX[0], froggerX[1], froggerY[0] + x, froggerY[1] + x,
+        bool safe = (overlap(froggerX[0], froggerX[1], froggerY[0], froggerY[1],
             riverObjX[0], riverObjX[1], 0, 10000));
         onObjectList.add(safe);
         if (safe) {
@@ -225,7 +237,8 @@ class Scene {
     // Validate elements within the scene
     try {
       checkFrog();
-      checkObstacles();
+      checkLanes();
+      checkRivers();
     } on GameOverException {
       throw new GameOverException("");
     }
