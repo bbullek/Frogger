@@ -85,11 +85,11 @@ class GameHost {
     // Check if Frogger should hop sideways
     if (_elapsedHorizontalHop > 0.25) {
       if (_keyboard.isPressed(KeyCode.LEFT)) {
-        _scene.frogger.move(Direction.LEFT, deltaX);
+        _scene.frogger.move(Direction.LEFT, deltaX, true);
         _lastHorizontalHop = time;
       }
       if (_keyboard.isPressed(KeyCode.RIGHT)) {
-        _scene.frogger.move(Direction.RIGHT, deltaX);
+        _scene.frogger.move(Direction.RIGHT, deltaX, true);
         _lastHorizontalHop = time;
       }
     }
@@ -97,11 +97,11 @@ class GameHost {
     // Check if Frogger should hop forwards/backwards
     if (_elapsedVerticalHop > 0.25) {
       if (_keyboard.isPressed(KeyCode.UP)) {
-        _scene.frogger.move(Direction.UP, deltaY);
+        _scene.frogger.move(Direction.UP, deltaY, true);
         _lastVerticalHop = time;
       }
       if (_keyboard.isPressed(KeyCode.DOWN)) {
-        _scene.frogger.move(Direction.DOWN, deltaY);
+        _scene.frogger.move(Direction.DOWN, deltaY, true);
         _lastVerticalHop = time;
       }
     }

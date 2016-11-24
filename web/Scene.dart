@@ -129,9 +129,11 @@ class Scene {
 
     // Validate x-location
     if (xFrogCell >= _numCellsX || frogger.xLoc > xLocMax) {
+      if (frogger.isFloating) throw new GameOverException("Floated offscreen!");
       _frogger.xLoc = xLocMax;
     }
     else if (xFrogCell < 0 || frogger.xLoc < 0) {
+      if (frogger.isFloating) throw new GameOverException("Floated offscreen!");
       _frogger.xLoc = 0;
     }
 
@@ -236,9 +238,9 @@ class Scene {
 
     // Validate elements within the scene
     try {
-      checkFrog();
       checkLanes();
       checkRivers();
+      checkFrog();
     } on GameOverException {
       throw new GameOverException("");
     }
@@ -260,7 +262,7 @@ class Scene {
       // Calculate the distance to move Frogger based on the speed of the object
       int delta = (elapsed * RiverObject.getSpeed(floatingObj)).toInt();
       Direction dir = RiverObject.getDirection(floatingObj);
-      _frogger.move(dir, delta);
+      _frogger.move(dir, delta, false);
       // Reset these variables
       _frogger.isFloating = false;
       _frogger.floatingObj = null;

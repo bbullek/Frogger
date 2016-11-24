@@ -64,7 +64,7 @@ abstract class RiverObject {
     if (riverObj is Log) {
       return [riverObj.offset - 5, riverObj.offset + riverObj.width + 5];
     } else if (riverObj is Turtle) {
-      return [riverObj.offset, riverObj.offset + riverObj.width + 60];
+      return [riverObj.offset, riverObj.offset + riverObj.width];
     } else {
       throw new StateError("Invalid RiverObject");
     }

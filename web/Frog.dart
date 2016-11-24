@@ -82,23 +82,41 @@ class Frog {
    * Makes the Frog hop in the given direction by the given amount.
    * @param direction: A member of the Direction enum -- LEFT/RIGHT/UP/DOWN.
    * @param delta: The value by which to move the Frog in the given direction.
+   * @param keyPressed: True if the player pressed an arrow key to move Frogger
    */
-  void move(Direction direction, int delta) {
-    if (direction == Direction.LEFT) {
-      _xLoc -= delta;
-      _frogImg = new ImageElement(src: "images/frogLeft.png");
-    }
-    if (direction == Direction.RIGHT) {
-      _xLoc += delta;
-      _frogImg = new ImageElement(src: "images/frogRight.png");
-    }
-    if (direction == Direction.UP) {
-      _yLoc -= delta;
-      _frogImg = new ImageElement(src: "images/frogUp.png");
-    }
-    if (direction == Direction.DOWN) {
-      _yLoc += delta;
-      _frogImg = new ImageElement(src: "images/frogDown.png");
+  void move(Direction direction, int delta, bool keyPressed) {
+    if (direction == Direction.LEFT) _xLoc -= delta;
+    if (direction == Direction.RIGHT) _xLoc += delta;
+    if (direction == Direction.UP) _yLoc -= delta;
+    if (direction == Direction.DOWN) _yLoc += delta;
+
+    // Update Frogger's sprite img if the player moved him (not if he's only
+    // floating on an object in the river)
+    if (keyPressed) setImage(direction);
+  }
+
+  /**
+   * Given a Direction, sets this Frog's image appropriately.
+   * @param direction: A value of the Direction enum.
+   */
+  void setImage(Direction direction) {
+    // TODO Cite https://www.dartlang.org/resources/dart-tips/dart-tips-ep-8
+    switch (direction) {
+      case Direction.LEFT:
+        _frogImg = new ImageElement(src: "images/frogLeft.png");
+        break;
+      case Direction.RIGHT:
+        _frogImg = new ImageElement(src: "images/frogRight.png");
+        break;
+      case Direction.UP:
+        _frogImg = new ImageElement(src: "images/frogUp.png");
+        break;
+      case Direction.DOWN:
+        _frogImg = new ImageElement(src: "images/frogDown.png");
+        break;
+      default:
+      // TODO Cite https://www.dartlang.org/resources/dart-tips/dart-tips-ep-9
+        throw new StateError("Invalid direction");
     }
   }
 
