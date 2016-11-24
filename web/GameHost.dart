@@ -106,7 +106,7 @@ class GameHost {
       }
     }
 
-    if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(""); // for debugging
+    if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(_scene.frogger.yLoc.toString()); // for debugging
 
     // Update the rest of the scene & check for game-over
     try {
@@ -114,7 +114,6 @@ class GameHost {
     } on GameOverException {
       frogSound.play();
       _scene.frogger.reset();
-      //window.alert("dead!!");
     }
   }
 

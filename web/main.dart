@@ -15,8 +15,13 @@ part 'Vehicle.dart';
 part 'Car.dart';
 part 'Truck.dart';
 part 'FireEngine.dart';
+part 'River.dart';
+part 'RiverObject.dart';
+part 'Log.dart';
+part 'Turtle.dart';
 part 'Color.dart';
 part 'Direction.dart';
+part 'Size.dart';
 part 'GameOverException.dart';
 
 void main() {

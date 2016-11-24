@@ -14,7 +14,7 @@ class Lane {
   static final VEHICLE_SPAWN_PROB = 0.25;
 
   /** The minimum amount of elapsed time before a new Vehicle spawns here. */
-  double _min_vehicle_spawn_time;
+  double _minVehicleSpawnTime;
 
   /** The width (in pixels) of the Lane. */
   int _width;
@@ -53,7 +53,7 @@ class Lane {
     _random = new Random();
     _lastVehicleSpawnTime = new DateTime.now().millisecondsSinceEpoch / 1000.0;
     _vehicles = [];
-    _min_vehicle_spawn_time = Lane.getMinVehicleSpawnTime(_laneNumber);
+    _minVehicleSpawnTime = Lane.getMinSpawnTime(_laneNumber);
   }
 
   /* Getters and setters */
@@ -71,7 +71,7 @@ class Lane {
 
   int get laneNumber => _laneNumber;
 
-  double get min_vehicle_spawn_time => _min_vehicle_spawn_time;
+  double get minVehicleSpawnTime => _minVehicleSpawnTime;
 
   double get lastVehicleSpawnTime => _lastVehicleSpawnTime;
 
@@ -96,7 +96,7 @@ class Lane {
    * within this Lane. (For example, since Cars are smaller than Trucks, they
    * have a smaller respawn time.)
    */
-  static getMinVehicleSpawnTime(int laneNumber) {
+  static getMinSpawnTime(int laneNumber) {
     if (laneNumber == 2) { // Trucks
       return Truck.MIN_RESPAWN_TIME;
     } if (laneNumber == 4) { // FireEngines
@@ -174,14 +174,15 @@ class Lane {
    * list and destroying them if they've gone off-screen (i.e. exceeded the
    * bounds of this lane).
    */
-  void checkVehicles() {
+  void clearVehicles() {
+    // Create a copy so we can "modify" the List while iterating through it
+    List<Vehicle> copy = [];
     for (Vehicle vehicle in _vehicles) {
-      if (vehicle.offset < 0 || vehicle.offset > _width) {
-        // Dart has garbage collection but better safe than sorry?
-        vehicle = null;
-        _vehicles.remove(vehicle);
+      if (!(vehicle.offset + 2 * vehicle.width < 0 || vehicle.offset > _width)) {
+        copy.add(vehicle);
       }
     }
+    _vehicles = copy;
   }
 
   /**
@@ -189,7 +190,7 @@ class Lane {
    * @param context: The 2D context used to render images on the HTML canvas.
    */
   void draw(CanvasRenderingContext2D context) {
-    // Iterate through the Cars in this Lane and draw each of them
+    // Iterate through the Vehicles in this Lane and draw each of them
     for (Vehicle vehicle in _vehicles) {
       vehicle.draw(context, _offset);
     }

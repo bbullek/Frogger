@@ -8,6 +8,9 @@ class Scene {
   /** The number of lanes in the scene, based on the .png image. */
   static final int NUM_LANES = 5;
 
+  /** The number of strips of river in the scene, based on the .png image. */
+  static final int NUM_RIVERS = 5;
+
   /** The width (in pixels) of the scene. */
   int _width;
 
@@ -29,6 +32,9 @@ class Scene {
   /** The list of all Lanes within the scene. */
   // TODO Cite https://api.dartlang.org/stable/1.20.1/dart-core/List-class.html
   List<Lane> _lanes;
+
+  /** The list of all Rivers within the scene. */
+  List<River> _rivers;
 
   /** The game's background image. */
   ImageElement _backgroundImg;
@@ -52,8 +58,8 @@ class Scene {
     _frogger = new Frog(_cellWidth, _cellHeight, (_numCellsX ~/ 2) * _cellWidth,
         (_numCellsY - 1) * _cellHeight);
 
-    // Create Lanes
     initLanes();
+    initRivers();
   }
 
   /* Getters and setters */
@@ -83,12 +89,30 @@ class Scene {
     // TODO Cite https://www.dartlang.org/resources/dart-tips/dart-tips-ep-8
     for (int laneNumber = 0; laneNumber < NUM_LANES; laneNumber++) {
       int laneWidth = _cellWidth * _numCellsX;
-      int laneHeight = _cellHeight * _numCellsY;
+      int laneHeight = _cellHeight;
       int laneOffset = _cellHeight * laneNumber + _cellHeight *
           numOffsetCells - (35 + 5 * laneNumber);
       // Create this Lane and add Vehicles to it
       _lanes.add(new Lane(laneWidth, laneHeight, laneOffset, laneNumber));
       _lanes[laneNumber].initVehicles(_cellWidth, _cellHeight);
+    }
+  }
+
+  /** Creates the Scene's list of Rivers upon instantiation. */
+  void initRivers() {
+    // TODO Cite https://api.dartlang.org/stable/1.20.1/dart-core/List-class.html
+    _rivers = []; // Create a variable-length list
+    int numOffsetCells = 1; // The number of grass cells above the Rivers
+
+    // TODO Cite https://www.dartlang.org/resources/dart-tips/dart-tips-ep-8
+    for (int riverNumber = 0; riverNumber < NUM_RIVERS; riverNumber++) {
+      int riverWidth = _cellWidth * _numCellsX;
+      int riverHeight = _cellHeight;
+      int riverOffset = _cellHeight * riverNumber + _cellHeight *
+          numOffsetCells - (10 + 4 * riverNumber) + (1 - (riverNumber % 2)) * 10;
+      // Create this River and add RiverObjects to it
+      _rivers.add(new River(riverWidth, riverHeight, riverOffset, riverNumber));
+      _rivers[riverNumber].initRiverObjs(_cellWidth, _cellHeight);
     }
   }
 
@@ -140,6 +164,39 @@ class Scene {
         }
       }
     }
+
+    int x = (_cellHeight * 0.5).toInt();
+
+    // Check whether Frogger has entered a water tile and has drowned
+    for (River river in _rivers) {
+      List riverX = [0, river.width];
+      List riverY = [river.offset, river.offset + river.height];
+
+      // Records whether Frogger is sitting on any RiverObject in this River
+      List<bool> onObjectList = [];
+
+      for (RiverObject riverObj in river.riverObjs) {
+        // Disregard and break if Frogger isn't in this River
+        bool inRiver = overlap(froggerX[0], froggerX[1], froggerY[0] + x, froggerY[1] + x,
+            riverX[0], riverX[1], riverY[0], riverY[1]);
+        if (!inRiver) break;
+
+        List riverObjX = RiverObject.getXRange(riverObj);
+
+        bool safe = (overlap(froggerX[0], froggerX[1], froggerY[0] + x, froggerY[1] + x,
+            riverObjX[0], riverObjX[1], 0, 10000));
+        onObjectList.add(safe);
+        if (safe) {
+          _frogger.isFloating = true;
+          _frogger.floatingObj = riverObj;
+          return;
+        }
+      }
+
+      // If Frogger is in this River and isn't sitting on any objects, game over
+      bool unsafe = onObjectList.length > 0 && !onObjectList.contains(true);
+      if (unsafe) throw new GameOverException("Drowned!");
+    }
   }
 
   /**
@@ -160,16 +217,58 @@ class Scene {
    */
   void update(final double elapsed) {
     // Move all Vehicles forward by some velocity times the delta time slice
+    updateLanes(elapsed);
+
+    // Move all RiverObjects (Logs/Turtles) forward by some velocity
+    updateRivers(elapsed);
+
+    // Validate elements within the scene
+    try {
+      checkFrog();
+      checkObstacles();
+    } on GameOverException {
+      throw new GameOverException("");
+    }
+
+    // If Frogger is floating, move him forward with the current
+    updateFrogger(elapsed);
+  }
+
+  /**
+   * If Frogger is currently floating on a RiverObject, automatically moves
+   * him forward at the velocity of the RiverObject without any input from
+   * the player.
+   * @param elapsed: The elapsed time (in seconds) since the last update.
+   */
+  void updateFrogger(final double elapsed) {
+    if (_frogger.isFloating) {
+      // The RiverObject on which Frogger is floating
+      RiverObject floatingObj = _frogger.floatingObj;
+      // Calculate the distance to move Frogger based on the speed of the object
+      int delta = (elapsed * RiverObject.getSpeed(floatingObj)).toInt();
+      Direction dir = RiverObject.getDirection(floatingObj);
+      _frogger.move(dir, delta);
+      // Reset these variables
+      _frogger.isFloating = false;
+      _frogger.floatingObj = null;
+    }
+  }
+
+  /**
+   * Iterates through the Vehicles in each of the Scene's Lanes and moves them
+   * forward in an amount proportional to the elapsed time.
+   */
+  void updateLanes(final double elapsed) {
     for (Lane lane in _lanes) {
       for (Vehicle vehicle in lane.vehicles) {
         int delta = (elapsed * Vehicle.getSpeed(vehicle)).toInt();
         vehicle.move(delta);
       }
-      lane.checkVehicles();
+      lane.clearVehicles(); // Clear any extraneous Vehicles
 
       // If enough time has passed, random chance of spawning a new Vehicle
       double currentTime =  new DateTime.now().millisecondsSinceEpoch / 1000.0;
-      if (currentTime - lane._lastVehicleSpawnTime > lane.min_vehicle_spawn_time) {
+      if (currentTime - lane._lastVehicleSpawnTime > lane.minVehicleSpawnTime) {
         double rand = lane.random.nextDouble();
         if (rand <= Lane.VEHICLE_SPAWN_PROB) {
           lane.lastVehicleSpawnTime = currentTime;
@@ -182,13 +281,35 @@ class Scene {
         }
       }
     }
+  }
 
-    // Validate elements within the scene
-    try {
-      checkFrog();
-      checkObstacles();
-    } on GameOverException {
-      throw new GameOverException("");
+  /**
+   * Iterates through the RiverObjects in each of the Scene's Rivers and moves
+   * them forward in an amount proportional to the elapsed time.
+   */
+  void updateRivers(final double elapsed) {
+    for (River river in _rivers) {
+      for (RiverObject riverObj in river.riverObjs) {
+        int delta = (elapsed * RiverObject.getSpeed(riverObj)).toInt();
+        riverObj.move(delta);
+      }
+      river.clearRiverObjs(); // Clear any extraneous RiverObjects
+
+      // If enough time has passed, random chance of spawning a new RiverObject
+      double currentTime =  new DateTime.now().millisecondsSinceEpoch / 1000.0;
+      if (currentTime - river.lastObjSpawnTime > river.minObjSpawnTime) {
+        double rand = river.random.nextDouble();
+        if (rand <= River.RIVER_SPAWN_PROB) {
+          river.lastObjSpawnTime = currentTime;
+          // Logs spawn at the far-right end, Turtles spawn on the left
+          if (river.riverNumber % 2 == 0) { // Turtles
+            river.spawnRiverObj(_cellWidth, _cellHeight,
+                0 - (_cellWidth * Turtle.NUM_CELLS).toInt());
+          } else {
+            river.spawnRiverObj(_cellWidth, _cellHeight, river.width);
+          }
+        }
+      }
     }
   }
 
@@ -203,12 +324,17 @@ class Scene {
     });
     context.drawImageScaled(_backgroundImg, 0, 0, _width, _height);
 
-    // Draw Frogger
-    _frogger.draw(context);
-
     // Draw each Lane
     for (Lane lane in _lanes) {
       lane.draw(context);
     }
+
+    // Draw each River
+    for (River river in _rivers) {
+      river.draw(context);
+    }
+
+    // Draw Frogger
+    _frogger.draw(context);
   }
 }

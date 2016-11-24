@@ -28,6 +28,12 @@ class Frog {
   int _xOrigin;
   int _yOrigin;
 
+  /** Whether or not Frogger is currently floating on a RiverObject (Log/Turtle) */
+  bool _isFloating;
+
+  /** The RiverObject on which Frogger is floating, if applicable */
+  RiverObject _floatingObj;
+
   /** Frog's constructor */
   Frog(int width, int height, int xLoc, int yLoc) {
     _width = width;
@@ -37,6 +43,8 @@ class Frog {
     _xOrigin = xLoc;
     _yOrigin = yLoc;
     _frogImg = new ImageElement(src: "images/frogUp.png");
+    _isFloating = false;
+    _floatingObj = null;
   }
 
   /* Getters and setters */
@@ -51,6 +59,14 @@ class Frog {
   int get yLoc => _yLoc;
 
   set yLoc(int value) { _yLoc = value; }
+
+  bool get isFloating => _isFloating;
+
+  set isFloating(bool value) { _isFloating = value; }
+
+  RiverObject get floatingObj => _floatingObj;
+
+  set floatingObj(RiverObject value) { _floatingObj = value; }
   /* End of getters and setters */
 
   /**
