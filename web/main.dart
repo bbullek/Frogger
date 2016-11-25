@@ -24,6 +24,7 @@ part 'Direction.dart';
 part 'Size.dart';
 part 'GameOverException.dart';
 part 'AudioPackage.dart';
+part 'Lilypad.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");

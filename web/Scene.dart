@@ -11,6 +11,9 @@ class Scene {
   /** The number of strips of river in the scene, based on the .png image. */
   static final int NUM_RIVERS = 5;
 
+  /** The number of lilypads drawn at the top of the game window. */
+  static final int NUM_LILYPADS = 5;
+
   /** The width (in pixels) of the scene. */
   int _width;
 
@@ -36,6 +39,9 @@ class Scene {
   /** The list of all Rivers within the scene. */
   List<River> _rivers;
 
+  /** The list of all Lilypads within the scene. */
+  List<Lilypad> _lilypads;
+
   /** The game's background image. */
   ImageElement _backgroundImg;
 
@@ -58,12 +64,10 @@ class Scene {
     _backgroundImg = new ImageElement(src: "images/background.png");
     _audio = new AudioPackage();
 
-    // Create Frogger
-    _frogger = new Frog(_cellWidth, _cellHeight, (_numCellsX ~/ 2) * _cellWidth,
-        (_numCellsY - 1) * _cellHeight);
-
+    initFrogger();
     initLanes();
     initRivers();
+    initLilypads();
   }
 
   /* Getters and setters */
@@ -83,6 +87,15 @@ class Scene {
 
   int get cellHeight => _cellHeight;
   /* End of getters and setters */
+
+  /**
+   * Creates a new Frogger and puts him at the middle of the bottom row of
+   * the game window.
+   */
+  void initFrogger() {
+    _frogger = new Frog(_cellWidth, _cellHeight, (_numCellsX ~/ 2) * _cellWidth,
+        (_numCellsY - 1) * _cellHeight);
+  }
 
   /** Creates the Scene's list of Lanes upon instantiation. */
   void initLanes() {
@@ -120,6 +133,22 @@ class Scene {
     }
   }
 
+  /** Creates the Scene's list of Lilypads upon instantiation. */
+  void initLilypads() {
+    // TODO Cite https://api.dartlang.org/stable/1.20.1/dart-core/List-class.html
+    _lilypads = []; // Create a variable-length list
+
+    // TODO Cite https://www.dartlang.org/resources/dart-tips/dart-tips-ep-8
+    for (int lilypadNum = 0; lilypadNum < NUM_LILYPADS; lilypadNum++) {
+      int lilypadWidth = _cellWidth;
+      int lilypadHeight = _cellHeight;
+      // The horizontal offset of this Lilypad from the left of the screen
+      int lilypadOffset = 2 * _cellWidth * lilypadNum + _cellWidth;
+      // Create this Lilypad
+      _lilypads.add(new Lilypad(lilypadWidth, lilypadHeight, lilypadOffset));
+    }
+  }
+
   /**
    * Validates that Frogger hasn't gone out-of-bounds (i.e. beyond the borders
    * of the scene's grid.
@@ -153,6 +182,37 @@ class Scene {
     }
     else if (yFrogCell < 0 || frogger.yLoc < 0) {
       _frogger.yLoc = 0;
+    }
+  }
+
+  /**
+   * If Frogger is currently standing on a Lilypad, updates that Lilypad's
+   * status (it now has a new Frogger sitting on it
+   */
+  void checkLilypads() {
+    // Only check for these if Frogger is in the topmost row of the scene
+    if (_frogger.yLoc > 0) return;
+
+    List froggerX = [_frogger.xLoc, _frogger.xLoc + _frogger.width];
+    int padding = _cellWidth ~/ 4;
+
+    for (Lilypad lilypad in _lilypads) {
+      List lilypadX = [lilypad.offset, lilypad.offset + lilypad.width];
+      if (froggerX[0] + padding >= lilypadX[0] &&
+          froggerX[1] - padding <= lilypadX[1]) {
+        // Frogger has reached this Lilypad
+        if (lilypad.hasFrogger) {
+          // Two Froggers can't be on a Lilypad at once
+          _frogger.yLoc += (_cellHeight - 4);
+        } else {
+          _frogger.xLoc = lilypad.offset;
+          _frogger.yLoc = _cellHeight ~/ 8;
+          _frogger.setImage(Direction.DOWN);
+          lilypad.hasFrogger = true;
+          lilypad.frog = _frogger;
+          initFrogger(); // The old Frogger stays behind; spawn a new one
+        }
+      }
     }
   }
 
@@ -244,20 +304,21 @@ class Scene {
    * @param elapsed: The elapsed time (in seconds) since the last update.
    */
   void update(final double elapsed) {
-    // Move all Vehicles forward by some velocity times the delta time slice
-    updateLanes(elapsed);
-
-    // Move all RiverObjects (Logs/Turtles) forward by some velocity
-    updateRivers(elapsed);
-
     // Validate elements within the scene
     try {
+      checkLilypads();
       checkLanes();
       checkRivers();
       checkFrog();
     } on GameOverException {
       throw new GameOverException("");
     }
+
+    // Move all Vehicles forward by some velocity times the delta time slice
+    updateLanes(elapsed);
+
+    // Move all RiverObjects (Logs/Turtles) forward by some velocity
+    updateRivers(elapsed);
 
     // If Frogger is floating, move him forward with the current
     updateFrogger(elapsed);
@@ -361,6 +422,11 @@ class Scene {
     // Draw each River
     for (River river in _rivers) {
       river.draw(context);
+    }
+
+    // Draw each Lilypad
+    for (Lilypad lilypad in _lilypads) {
+      lilypad.draw(context);
     }
 
     // Draw Frogger
