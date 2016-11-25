@@ -90,8 +90,7 @@ class Frog {
     if (direction == Direction.UP) _yLoc -= delta;
     if (direction == Direction.DOWN) _yLoc += delta;
 
-    // Update Frogger's sprite img if the player moved him (not if he's only
-    // floating on an object in the river)
+    // Update Frogger's sprite if the player moved him
     if (keyPressed) setImage(direction);
   }
 

@@ -19,7 +19,6 @@ class GameHost {
   int _lastHorizontalHop;
   double _elapsedVerticalHop;
   double _elapsedHorizontalHop;
-  AudioElement frogSound; //
 
   // Constructor for the GameHost class
   GameHost(CanvasElement canvas) {
@@ -31,9 +30,6 @@ class GameHost {
     _lastHorizontalHop = new DateTime.now().millisecondsSinceEpoch;
     _elapsedHorizontalHop = 0.0;
     _elapsedVerticalHop = 0.0;
-    frogSound = new AudioElement("sounds/frog.wav") //
-      ..autoplay = false //
-      ..load(); //
   }
 
   /**
@@ -112,7 +108,6 @@ class GameHost {
     try {
       _scene.update(elapsed);
     } on GameOverException {
-      frogSound.play();
       _scene.frogger.reset();
     }
   }

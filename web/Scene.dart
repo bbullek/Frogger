@@ -39,6 +39,9 @@ class Scene {
   /** The game's background image. */
   ImageElement _backgroundImg;
 
+  /** The collection of audio files played during the game. */
+  AudioPackage _audio;
+
   /** The game's Frogger character. */
   Frog _frogger;
 
@@ -53,6 +56,7 @@ class Scene {
     _cellWidth = _width ~/ _numCellsX;
     _cellHeight = _height ~/ _numCellsY;
     _backgroundImg = new ImageElement(src: "images/background.png");
+    _audio = new AudioPackage();
 
     // Create Frogger
     _frogger = new Frog(_cellWidth, _cellHeight, (_numCellsX ~/ 2) * _cellWidth,
@@ -129,11 +133,17 @@ class Scene {
 
     // Validate x-location
     if (xFrogCell >= _numCellsX || frogger.xLoc > xLocMax) {
-      if (frogger.isFloating) throw new GameOverException("Floated offscreen!");
+      if (frogger.isFloating) {
+        _audio.froggerPlunk.play();
+        throw new GameOverException("Floated offscreen!");
+      }
       _frogger.xLoc = xLocMax;
     }
     else if (xFrogCell < 0 || frogger.xLoc < 0) {
-      if (frogger.isFloating) throw new GameOverException("Floated offscreen!");
+      if (frogger.isFloating) {
+        _audio.froggerPlunk.play();
+        throw new GameOverException("Floated offscreen!");
+      }
       _frogger.xLoc = 0;
     }
 
@@ -162,6 +172,7 @@ class Scene {
         List vehicleY = [lane.offset, lane.offset + vehicle.height];
         if (overlap(froggerX[0], froggerX[1], froggerY[0], froggerY[1],
             vehicleX[0], vehicleX[1], vehicleY[0], vehicleY[1])) {
+          _audio.froggerSquashed.play();
           throw new GameOverException("Frogger's been squished!");
         }
       }
@@ -209,7 +220,10 @@ class Scene {
 
       // If Frogger is in this River and isn't sitting on any objects, game over
       bool unsafe = onObjectList.length > 0 && !onObjectList.contains(true);
-      if (unsafe) throw new GameOverException("Drowned!");
+      if (unsafe) {
+        _audio.froggerPlunk.play();
+        throw new GameOverException("Drowned!");
+      }
     }
   }
 
