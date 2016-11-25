@@ -23,8 +23,10 @@ part 'Color.dart';
 part 'Direction.dart';
 part 'Size.dart';
 part 'GameOverException.dart';
+part 'GameWonException.dart';
 part 'AudioPackage.dart';
 part 'Lilypad.dart';
+part 'GameState.dart';
 
 void main() {
   final CanvasElement canvas = querySelector("#area");

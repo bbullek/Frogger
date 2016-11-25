@@ -19,6 +19,8 @@ class GameHost {
   int _lastHorizontalHop;
   double _elapsedVerticalHop;
   double _elapsedHorizontalHop;
+  GameState _state;
+  ImageElement _gameWonImg;
 
   // Constructor for the GameHost class
   GameHost(CanvasElement canvas) {
@@ -30,6 +32,8 @@ class GameHost {
     _lastHorizontalHop = new DateTime.now().millisecondsSinceEpoch;
     _elapsedHorizontalHop = 0.0;
     _elapsedVerticalHop = 0.0;
+    _state = GameState.PLAY;
+    _gameWonImg = new ImageElement(src: "images/gameWon.png");
   }
 
   /**
@@ -68,12 +72,21 @@ class GameHost {
   }
 
   /**
-   * Moves Frogger in the appropriate direction by checking the game's 'state'
-   * (i.e. which key(s) is/are currently being pressed). Implements a simple
-   * checking system to prevent the player from hopping around too quickly.
+   * Depending on the current game's state, calls the appropriate update method.
    * @param elapsed: The elapsed time (in seconds) since the last update.
    */
   void _update(final double elapsed) {
+    if (_state == GameState.PLAY) updatePlayState(elapsed);
+    else if (_state == GameState.WAIT) updateWaitState();
+  }
+
+  /**
+   * Moves Frogger in the appropriate direction by checking which key(s) is/are
+   * currently being pressed. Implements a simple checking system to prevent
+   * the player from hopping around too quickly.
+   * @param elapsed: The elapsed time (in seconds) since the last update.
+   */
+  void updatePlayState(final double elapsed) {
     int deltaX = _scene._cellWidth;
     int deltaY = _scene._cellHeight - 5;
     int time = new DateTime.now().millisecondsSinceEpoch;
@@ -102,13 +115,24 @@ class GameHost {
       }
     }
 
-    if (_keyboard.isPressed(KeyCode.SPACE)) window.alert(_scene.frogger.yLoc.toString()); // for debugging
-
     // Update the rest of the scene & check for game-over
     try {
       _scene.update(elapsed);
     } on GameOverException {
       _scene.frogger.reset();
+    } on GameWonException {
+      _state = GameState.WAIT;
+    }
+  }
+
+  /**
+   * If the player presses the spacebar, resumes normal game mode. Otherwise,
+   * keypresses are ignored.
+   */
+  void updateWaitState() {
+    if (_keyboard.isPressed(KeyCode.SPACE)) {
+      _state = GameState.PLAY;
+      _scene.resetLilypads();
     }
   }
 
@@ -118,6 +142,16 @@ class GameHost {
    */
   void _render() {
     CanvasRenderingContext2D context = _canvas.context2D;
-    this._scene.draw(context);
+    _scene.draw(context);
+
+    if (_state == GameState.WAIT) {
+      // TODO Cite: https://api.dartlang.org/stable/1.20.1/dart-html/CanvasRenderingContext2D/drawImageScaled.html
+      _gameWonImg.onLoad.listen((e) {
+        context.drawImageScaled(_gameWonImg, _canvas.width ~/ 8,
+            _canvas.height ~/ 2.5, _canvas.width ~/ 1.4, _canvas.height ~/ 8);
+      });
+      context.drawImageScaled(_gameWonImg, _canvas.width ~/ 8,
+          _canvas.height ~/ 2.5, _canvas.width ~/ 1.4, _canvas.height ~/ 8);
+    }
   }
 }

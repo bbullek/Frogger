@@ -9,6 +9,9 @@ part of main;
  * states (including animation frame and position).
  */
 class Frog {
+  /** The number of seconds Frogger is immobile before he respawns again */
+  static final GAME_OVER_REGEN_TIME = 1;
+
   /** Frogger's image */
   ImageElement _frogImg;
 
@@ -76,6 +79,7 @@ class Frog {
   void reset() {
     _xLoc = _xOrigin;
     _yLoc = _yOrigin;
+    setImage(Direction.UP);
   }
 
   /**

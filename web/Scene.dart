@@ -181,8 +181,12 @@ class Scene {
       _frogger.yLoc = yLocMax;
     }
     else if (yFrogCell <= 0) {
-      if (_frogger.yLoc <= -6 && !onEmptyLilypad()) {
-        _frogger.yLoc = _cellHeight - 11;
+      try {
+        if (_frogger.yLoc <= -6 && !onEmptyLilypad()) {
+          _frogger.yLoc = _cellHeight - 11;
+        }
+      } on GameWonException {
+        throw new GameWonException("");
       }
     }
   }
@@ -210,6 +214,7 @@ class Scene {
           lilypad.hasFrogger = true;
           lilypad.frog = _frogger;
           initFrogger(); // The old Frogger stays behind; spawn a new one
+          if (gameIsWon()) throw new GameWonException("");
           return true;
         }
       }
@@ -300,6 +305,27 @@ class Scene {
   }
 
   /**
+   * Checks whether Frogger has reached each of the lilypads and has won the
+   * game.
+   */
+  bool gameIsWon() {
+    for (Lilypad lilypad in _lilypads) {
+      if (!lilypad.hasFrogger) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Clears the Frogs from each Lilypad in order to allow Frogger to play again.
+   */
+  void resetLilypads() {
+    for (Lilypad lilypad in _lilypads) {
+      lilypad.hasFrogger = false;
+      lilypad.frog = null;
+    }
+  }
+
+  /**
    * Updates autonomously moving elements within the scene (vehicles, logs,
    * etc.)
    * @param elapsed: The elapsed time (in seconds) since the last update.
@@ -307,12 +333,16 @@ class Scene {
   void update(final double elapsed) {
     // Validate elements within the scene
     try {
-      //checkLilypads();
       checkLanes();
       checkRivers();
-      checkFrog();
     } on GameOverException {
       throw new GameOverException("");
+    }
+
+    try {
+      checkFrog();
+    } on GameWonException {
+      throw new GameWonException("");
     }
 
     // Move all Vehicles forward by some velocity times the delta time slice
@@ -416,19 +446,13 @@ class Scene {
     context.drawImageScaled(_backgroundImg, 0, 0, _width, _height);
 
     // Draw each Lane
-    for (Lane lane in _lanes) {
-      lane.draw(context);
-    }
+    for (Lane lane in _lanes) lane.draw(context);
 
     // Draw each River
-    for (River river in _rivers) {
-      river.draw(context);
-    }
+    for (River river in _rivers) river.draw(context);
 
     // Draw each Lilypad
-    for (Lilypad lilypad in _lilypads) {
-      lilypad.draw(context);
-    }
+    for (Lilypad lilypad in _lilypads) lilypad.draw(context);
 
     // Draw Frogger
     _frogger.draw(context);
