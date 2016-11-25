@@ -208,6 +208,7 @@ class Scene {
           froggerX[1] - padding <= lilypadX[1]) {
         // Frogger has reached this Lilypad
         if (!lilypad.hasFrogger) {
+          _audio.froggerVictory.play();
           _frogger.xLoc = lilypad.offset;
           _frogger.yLoc = _cellHeight ~/ 8;
           _frogger.setImage(Direction.DOWN);

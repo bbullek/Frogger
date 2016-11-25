@@ -19,10 +19,14 @@ class AudioPackage {
   /** The sound made when Frogger is squashed by a vehicle. */
   AudioElement _froggerSquashed;
 
+  /** The sound made when Frogger reaches a Lilypad. */
+  AudioElement _froggerVictory;
+
   /** AudioPackage's constructor */
   AudioPackage() {
     _bgMusic = new AudioElement("sounds/bgMusic.wav")
       ..autoplay = true
+      ..loop = true
       ..load();
     _froggerHop = new AudioElement("sounds/froggerHop.wav")
       ..autoplay = false
@@ -33,6 +37,9 @@ class AudioPackage {
     _froggerSquashed = new AudioElement("sounds/froggerSquashed.wav")
       ..autoplay = false
       ..load();
+    _froggerVictory = new AudioElement("sounds/froggerVictory.wav")
+      ..autoplay = false
+      ..load();
   }
 
   /* Getters and setters */
@@ -41,6 +48,8 @@ class AudioPackage {
   AudioElement get froggerPlunk => _froggerPlunk;
 
   AudioElement get froggerHop => _froggerHop;
+
+  AudioElement get froggerVictory => _froggerVictory;
 
   AudioElement get bgMusic => _bgMusic;
   /* End of getters and setters */
