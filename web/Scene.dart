@@ -161,7 +161,7 @@ class Scene {
     int yLocMax = _cellHeight * (_numCellsY - 1);
 
     // Validate x-location
-    if (xFrogCell >= _numCellsX || frogger.xLoc > xLocMax) {
+    if (xFrogCell > _numCellsX || frogger.xLoc > xLocMax) {
       if (frogger.isFloating) {
         _audio.froggerPlunk.play();
         throw new GameOverException("Floated offscreen!");
@@ -180,18 +180,20 @@ class Scene {
     if (yFrogCell >= _numCellsY || frogger.yLoc > yLocMax) {
       _frogger.yLoc = yLocMax;
     }
-    else if (yFrogCell < 0 || frogger.yLoc < 0) {
-      _frogger.yLoc = 0;
+    else if (yFrogCell <= 0) {
+      if (_frogger.yLoc <= -6 && !onEmptyLilypad()) {
+        _frogger.yLoc = _cellHeight - 11;
+      }
     }
   }
 
   /**
-   * If Frogger is currently standing on a Lilypad, updates that Lilypad's
-   * status (it now has a new Frogger sitting on it
+   * Detects whether Frogger is currently standing on a full Lilypad (i.e.
+   * another Frog is already sitting on it).
    */
-  void checkLilypads() {
+  bool onEmptyLilypad() {
     // Only check for these if Frogger is in the topmost row of the scene
-    if (_frogger.yLoc > 0) return;
+    if (_frogger.yLoc > 0) return false;
 
     List froggerX = [_frogger.xLoc, _frogger.xLoc + _frogger.width];
     int padding = _cellWidth ~/ 4;
@@ -201,19 +203,18 @@ class Scene {
       if (froggerX[0] + padding >= lilypadX[0] &&
           froggerX[1] - padding <= lilypadX[1]) {
         // Frogger has reached this Lilypad
-        if (lilypad.hasFrogger) {
-          // Two Froggers can't be on a Lilypad at once
-          _frogger.yLoc += (_cellHeight - 4);
-        } else {
+        if (!lilypad.hasFrogger) {
           _frogger.xLoc = lilypad.offset;
           _frogger.yLoc = _cellHeight ~/ 8;
           _frogger.setImage(Direction.DOWN);
           lilypad.hasFrogger = true;
           lilypad.frog = _frogger;
           initFrogger(); // The old Frogger stays behind; spawn a new one
+          return true;
         }
       }
     }
+    return false;
   }
 
   /**
@@ -306,7 +307,7 @@ class Scene {
   void update(final double elapsed) {
     // Validate elements within the scene
     try {
-      checkLilypads();
+      //checkLilypads();
       checkLanes();
       checkRivers();
       checkFrog();
