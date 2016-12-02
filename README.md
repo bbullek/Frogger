@@ -37,7 +37,7 @@ Step 2: Extract the zip into its own directory
 Step 3: Add the Dartium executable to your path:
         export PATH=$PATH:/[ABSOLUTE PATH TO DARTIUM DIR]/chrome
 
-Step 4: Navigate to the csci208/project/Frogger/web directory
+Step 4: Navigate to the Frogger/web directory
 
 Step 5: Enter the following: chrome Frogger.html
 
